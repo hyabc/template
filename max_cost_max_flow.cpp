@@ -7,6 +7,7 @@
 #define INF 1000000000
 
 int S, T;
+int n;
 int edge;
 int first[NMAX], next[MMAX], tail[MMAX], rev[MMAX], c[MMAX], cost[MMAX], f[MMAX];
 
@@ -24,6 +25,7 @@ void addedge(int u, int v, int cap, int co) {
 	c[edge] = cap;
 	cost[edge] = -co;
 	rev[edge] = edge + 1;
+	
 	edge++;
 	next[edge] = first[v];
 	first[v] = edge;
@@ -34,10 +36,9 @@ void addedge(int u, int v, int cap, int co) {
 }
 
 bool spfa() {
-	memset(inq, false, sizeof(inq));
-	memset(d, 8, sizeof(d));
+	for (int i = 1;i <= n;i++) inq[i] = false;
+	for (int i = 1;i <= n;i++) d[i] = INF;
 
-	int init = d[0];
 	int l = 1, r = 1;
 	q[1] = S;
 	inq[S] = true;
@@ -57,7 +58,7 @@ bool spfa() {
 			}
 		}
 	}
-	return d[T] < init;
+	return d[T] < INF;
 }
 
 int sum;
@@ -82,11 +83,11 @@ int augment() {
 }
 
 int main() {
-	int m, n;
-	scanf("%d%d", &m, &n);
+	int m, c;
+	scanf("%d%d", &m, &c);
 
 	int count = 0;
-	for (int i = 1;i <= n;i++) {
+	for (int i = 1;i <= c;i++) {
 		for (int j = 1;j <= m + i - 1;j++) {
 			scanf("%d", &v[i][j]);
 			id[i][j][0] = ++count;
@@ -97,16 +98,18 @@ int main() {
 	edge = 0;
 	S = ++count, T = ++count;
 	for (int i = 1;i <= m;i++) addedge(S, id[1][i][0], 1, 0);
-	for (int i = 1;i <= n;i++)
+	for (int i = 1;i <= c;i++)
 		for (int j = 1;j <= m + i - 1;j++) {
 			addedge(id[i][j][0], id[i][j][1], 1, v[i][j]);
-			if (i != n) {
+			if (i != c) {
 				addedge(id[i][j][1], id[i+1][j][0], 1, 0);
 				addedge(id[i][j][1], id[i+1][j+1][0], 1, 0);
 			}
 		}
-	for (int i = 1;i <= m + n - 1;i++) addedge(id[n][i][1], T, 1, 0);
+	for (int i = 1;i <= m + c - 1;i++) addedge(id[c][i][1], T, 1, 0);
 
+	n = count;
+	
 	sum = 0;
 	int ans = 0;
 	while (spfa()) ans += augment();

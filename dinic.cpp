@@ -2,11 +2,15 @@
 #include <cstring>
 #include <algorithm>
 
-int s, t;
-int n, m;
+#define NMAX 1000010
+#define MMAX 1000010
+
+int S, T;
+int n;
 int edge;
 const int INF = 100000000;
-int first[40010],  next[500010], tail[500010], rev[500010], iter[40010], c[500010], f[500010], q[40010], dep[40010];
+int first[NMAX],  next[MMAX], tail[MMAX], rev[MMAX];
+int iter[NMAX], c[MMAX], f[MMAX], q[NMAX], dep[NMAX];
 
 void addedge(int x, int y, int cap) {
 	edge++;
@@ -16,6 +20,7 @@ void addedge(int x, int y, int cap) {
 	c[edge] = cap;
 	f[edge] = 0;
 	rev[edge] = edge + 1;
+	
 	edge++;
 	next[edge] = first[y];
 	first[y] = edge;
@@ -26,9 +31,9 @@ void addedge(int x, int y, int cap) {
 }
 
 bool bfs()  {
-	int l = 1, r = 1;q[1] = t;
+	int l = 1, r = 1;q[1] = T;
 	for (int i = 1;i <= n;i++) dep[i] = INF;
-	dep[t] = 1;
+	dep[T] = 1;
 	while (l <= r) {
 		int cur = q[l++];
 		for (int e = first[cur];e;e = next[e]) {
@@ -39,11 +44,11 @@ bool bfs()  {
 			}
 		}
 	}
-	return dep[s] < INF;
+	return dep[S] < INF;
 }
 
 int dfs(int u, int cap) {
-	if (u == t) return cap;
+	if (u == T) return cap;
 	int flowtotal = 0;
 
 	for (int e = iter[u];e;e = next[e]) {
@@ -63,8 +68,9 @@ int dfs(int u, int cap) {
 }
 
 int main() {
+	int m;
 	scanf("%d%d", &n, &m);
-	scanf("%d%d", &s, &t);
+	scanf("%d%d", &S, &T);
 
 	edge = 0;
 	for (int i = 1;i <= m;i++) {
@@ -75,7 +81,7 @@ int main() {
 	int flow = 0;
 	while (bfs()) {
 		for (int i = 1;i <= n;i++) iter[i] = first[i];
-		flow += dfs(s, INF);
+		flow += dfs(S, INF);
 	}
 
 	printf("%d\n", flow);
