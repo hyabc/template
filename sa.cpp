@@ -1,8 +1,11 @@
 #include <cstdio>
 #include <cstring>
 
-char st[200010];
-int str[200010], sa[200010], rank[200010], lsb[200010], msb[200010], c[200010], h[200010];
+#define NMAX 1000010
+
+char st[NMAX];
+int str[NMAX];
+int sa[NMAX], rank[NMAX], lsb[NMAX], msb[NMAX], c[NMAX], h[NMAX];
 
 void radix(int* key, int* a, int* b, int n, int m) {
 	for (int i = 0;i <= m;i++) c[i] = 0;
@@ -20,7 +23,7 @@ int main() {
 	for (int i = 1;i <= n;i++) str[i] = st[i] - 'a' + 1;
 
 	for (int i = 1;i <= n;i++) rank[i] = i;
-	radix(str, rank, sa, n, 300);
+	radix(str, rank, sa, n, 26);
 
 	rank[sa[1]] = 1;
 	for (int i = 2;i <= n;i++) {
@@ -34,9 +37,11 @@ int main() {
 		}
 		radix(lsb, sa, rank, n, n);
 		radix(msb, rank, sa, n, n);
+		
 		rank[sa[1]] = 1;
-		for (int j = 2;j <= n;j++)
+		for (int j = 2;j <= n;j++) {
 			rank[sa[j]] = (lsb[sa[j]] == lsb[sa[j - 1]] && msb[sa[j]] == msb[sa[j - 1]])  ?  rank[sa[j - 1]]  :  rank[sa[j - 1]] + 1;
+		}
 	}
 
 	for (int i = 1;i <= n;i++) printf("%d ", sa[i]);printf("\n");
@@ -45,7 +50,7 @@ int main() {
 	for (int i = 1;i <= n;i++) {
 		h[i] = h[i - 1];
 		if (h[i]) h[i]--;
-		while (i +  h[i]  <= n && sa[rank[i]-1] + h[i]   <= n && str[i + h[i] ] == str[sa[rank[i]-1] + h[i] ]) h[i]++;
+		while (i + h[i] <= n && sa[rank[i]-1] + h[i] <= n && str[i + h[i]] == str[sa[rank[i]-1] + h[i]]) h[i]++;
 	}
 
 	for (int i = 2;i <= n;i++) printf("%d ", h[sa[i]]);
